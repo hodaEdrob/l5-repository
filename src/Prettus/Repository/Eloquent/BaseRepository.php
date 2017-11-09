@@ -100,7 +100,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      */
     public function boot()
     {
-
+        //
     }
 
     /**
@@ -259,12 +259,27 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param string|null $key
      *
      * @return \Illuminate\Support\Collection|array
+     * @deprecated since version laravel 5.2. Use the "pluck" method directly.
      */
     public function lists($column, $key = null)
     {
-        $this->applyCriteria();
+        return $this->pluck($column, $key);
+    }
 
-        return $this->model->lists($column, $key);
+    /**
+     * Retrieve data array for populate field select
+     *
+     * @param string      $column
+     * @param string|null $key
+     *
+     * @return \Illuminate\Support\Collection|array
+     */
+    public function pluck($column, $key = null)
+    {
+        $this->applyCriteria();
+        
+        return $this->model->pluck($column, $key);
+
     }
 
     /**
@@ -331,6 +346,18 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
         $this->resetScope();
 
         return $this->parserResult($results);
+    }
+
+    /**
+     * Alias of All method
+     *
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function get($columns = ['*'])
+    {
+        return $this->all($columns);
     }
 
 
@@ -402,18 +429,19 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
     /**
      * Retrieve all data of repository, paginated
      *
-     * @param null $limit
-     * @param array $columns
+     * @param null   $limit
+     * @param array  $columns
+     * @param string $pageName
      * @param string $method
      *
      * @return mixed
      */
-    public function paginate($limit = null, $columns = ['*'], $method = "paginate")
+    public function paginate($limit = null, $columns = ['*'], $pageName = 'page', $method = "paginate")
     {
         $this->applyCriteria();
         $this->applyScope();
         $limit = is_null($limit) ? config('repository.pagination.limit', 15) : $limit;
-        $results = $this->model->{$method}($limit, $columns);
+        $results = $this->model->{$method}($limit, $columns, $pageName);
         $results->appends(app('request')->query());
         $this->resetModel();
 
@@ -544,7 +572,10 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
             // we should pass data that has been casts by the model
             // to make sure data type are same because validator may need to use
             // this data to compare with data that fetch from database.
-            $attributes = $this->model->newInstance()->forceFill($attributes)->toArray();
+            $attributes = $this->model->newInstance()
+                ->forceFill($attributes)
+                ->makeVisible($this->model->getHidden())
+                ->toArray();
 
             $this->validator->with($attributes)->passesOrFail(ValidatorInterface::RULE_CREATE);
         }
@@ -576,7 +607,10 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
             // we should pass data that has been casts by the model
             // to make sure data type are same because validator may need to use
             // this data to compare with data that fetch from database.
-            $attributes = $this->model->newInstance()->forceFill($attributes)->toArray();
+            $attributes = $this->model->newInstance()
+                ->forceFill($attributes)
+                ->makeVisible($this->model->getHidden())
+                ->toArray();
 
             $this->validator->with($attributes)->setId($id)->passesOrFail(ValidatorInterface::RULE_UPDATE);
         }
@@ -963,7 +997,6 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
     public function parserResult($result)
     {
         if ($this->presenter instanceof PresenterInterface) {
-
             if ($result instanceof Collection || $result instanceof LengthAwarePaginator) {
                 $result->each(function ($model) {
                     if ($model instanceof Presentable) {
