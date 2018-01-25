@@ -1002,4 +1002,24 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
 
         return $result;
     }
+
+
+    /**********************************************
+     * EXTRA METHODS EXCLUSIVE TO EDROB/HODAEDROB *
+     **********************************************/
+
+    /**
+     * Retrieve query for all data of repository (to be used in plugins such as datatables)
+     *
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function allQuery($columns = ['*'])
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        return $this->model->select($columns);
+    }
 }
