@@ -11,6 +11,7 @@ use Exception;
 /**
  * Class CacheableRepository
  * @package Prettus\Repository\Traits
+ * @author Anderson Andrade <contato@andersonandra.de>
  */
 trait CacheableRepository
 {
@@ -222,7 +223,7 @@ trait CacheableRepository
      *
      * @return mixed
      */
-    public function paginate($limit = null, $columns = ['*'], $method = "paginate")
+    public function paginate($limit = null, $columns = ['*'], $method = 'paginate')
     {
         if (!$this->allowedCache('paginate') || $this->isSkippedCache()) {
             return parent::paginate($limit, $columns, $method);
