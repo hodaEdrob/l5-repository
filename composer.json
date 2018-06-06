@@ -1,12 +1,12 @@
 {
-  "name": "boadiversao/l5-repository",
+  "name": "edrob/l5-repository",
   "description": "Laravel 5 - Repositories to  the database layer",
   "keywords": ["laravel", "repository", "eloquent", "model", "cache"],
   "license": "MIT",
   "authors": [
     {
-      "name": "Carlos Eduardo Lima Braz",
-      "email": "carloseduardolbraz@gmail.com",
+      "name": "Hoda Shirzad",
+      "email": "hoda@edwardrobertson.co.uk",
       "role": "Software Engineer"
     },
     {
