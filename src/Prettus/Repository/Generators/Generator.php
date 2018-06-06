@@ -188,7 +188,7 @@ abstract class Generator
     {
         return config('repository.generator.rootNamespace', $this->getAppNamespace());
     }
-    
+
 
     /**
      * Get class-specific output paths.
