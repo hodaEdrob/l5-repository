@@ -1,3 +1,5 @@
+### This fork is no longer maintained. Please refer back to the original package.
+
 # Laravel 5 Repositories
 
 Laravel 5 Repositories is used to abstract the data layer, making our application more flexible to maintain.
